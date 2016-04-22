@@ -73,6 +73,7 @@ NSUInteger const kAddPostsViewPhotoStartTag = 20151227;
     self.btnCheckbox.hidden = YES;
     self.labelCheckbox.hidden = YES;
     self.labelCheckbox.text = str_Posts_Add_Tips3;
+    //self.labelCheckbox.backgroundColor=[UIColor redColor];
 
     NSData *addImage = UIImageJPEGRepresentation([UIImage imageNamed:png_Btn_AddPhoto], 1);
     [photoArray addObject:addImage];

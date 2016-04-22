@@ -29,6 +29,8 @@
 #define str_Common_Time7 @"%ld天前"
 #define str_Common_Time8 @"%ld个月前"
 #define str_Common_Time9 @"明天"
+#define str_Common_Time10 @"还剩%ld天"
+
 
 #define str_ViewTitle_1 @"我的"
 #define str_ViewTitle_2 @"计划"
@@ -265,6 +267,47 @@
 #define str_DateFormatter_yyyyMMddHHmmss @"yyyyMMddHHmmss"
 #define str_DateFormatter_yyyy_MM_dd_HHmm @"yyyy-MM-dd HH:mm"
 #define str_DateFormatter_yyyy_MM_dd @"yyyy-MM-dd"
+
+
+#define str_PlanList_UpdatedTime @"str_PlanList_UpdatedTime"
+#define str_Plan_FutureWeek @"一周之内开始"
+#define str_Plan_FutureMonth @"一个月之内开始"
+#define str_Plan_FutureYear @"一年之内开始"
+#define str_NoPlan_Future @"暂无未来计划"
+
+#define str_Task_Tips2 @"每次"
+#define str_Task_Tips3 @"分钟"
+#define str_Task_Tips4 @"使用番茄工作法，选择一个待完成的任务，将番茄时间设为25分钟，专注工作，中途不允许做任何与该任务无关的事，直到番茄时钟响起，然后在纸上画一个X短暂休息一下（5分钟就行），每4个番茄时段多休息一会儿。"
+#define str_Task_Tips5 @"请输入番茄工作法时间"
+#define str_Task_Tips6 @"每次番茄工作法的时间必须大于0分钟"
+#define str_Task_Tips7 @"设置重复提醒"
+#define str_Task_Tips8 @"当前番茄时间为0"
+#define str_Task_Tips9 @"开始番茄"
+#define str_Task_Tips10 @"番茄时间"
+#define str_Task_Tips11 @"任务提醒时间:"
+#define str_Task_Tips12 @"暂时没有完成记录"
+#define str_Task_Tips13 @"完成时间:"
+#define str_Task_Tips14 @"请选择提醒时间"
+
+
+
+#define str_Common_Tips8 @"每天重复提醒"
+#define str_Common_Tips9 @"每周重复提醒"
+#define str_Common_Tips10 @"每月重复提醒"
+#define str_Common_Tips11 @"每年重复提醒"
+
+#define str_Edit @"编辑"
+
+#define str_Tmp_Flag1 @"str_Tmp_Flag1"
+
+#define str_Plan_BeginDate @"开始日期："
+
+#define str_Posts_Add_Tips3 @"str_Posts_Add_Tips3"//上传照片界面
+
+
+
+
+
 
 #define str_Bmob_ApplicationID @"c2d17819bc025e90e998210ee07d5b4c"
 #define str_SinaWeibo_AppKey @"2763375435"
