@@ -12,7 +12,9 @@ typedef NS_ENUM(NSUInteger, PlanType) {
     
     EverydayPlan = 1, //每日计划
     
-    FuturePlan //未来计划
+    FuturePlan, //未来计划
+    
+    TaskPlan //任务计划
 };
 
 @interface Plan : ModelBase <NSCoding, NSCopying>

@@ -19,12 +19,19 @@
 #import "AddPlanViewController.h"
 #import <RESideMenu/RESideMenu.h>
 
+#import "Task.h"
+#import "TaskCell.h"
+#import "WZLBadgeImport.h"
+#import "AddTaskViewController.h"
+#import "TaskDetailViewController.h"
+
+
 NSUInteger const kPlan_MenuHeight = 44;
 NSUInteger const kPlan_MenuLineHeight = 3;
 NSUInteger const kPlanCellDeleteTag = 9527;
 NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
 
-@interface SecondViewController ()<UITableViewDataSource, UITableViewDelegate, PlanCellDelegate, HitViewDelegate> {
+@interface SecondViewController ()<UITableViewDataSource, UITableViewDelegate, PlanCellDelegate, HitViewDelegate,UIGestureRecognizerDelegate> {
     
     PlanCell *planCell;
     HitView *hitView;
@@ -45,9 +52,17 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
     
     UITableView *tableViewDay;
     UITableView *tableViewFuture;
+    UITableView *tableViewTask;
+    
     ThreeSubView *threeSubView;
     UIView *underLineView;
+    
+    BOOL isTableEditing;
+    NSMutableArray *taskArray;
+    UILongPressGestureRecognizer *longPress;
 }
+
+
 
 @end
 
@@ -63,11 +78,17 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
     [NotificationCenter addObserver:self selector:@selector(getPlanData) name:Notify_Plan_Save object:nil];
     [NotificationCenter addObserver:self selector:@selector(refreshRedDot) name:Notify_Messages_Save object:nil];
     
+    [NotificationCenter addObserver:self selector:@selector(toTask:) name:Notify_Push_LocalNotify object:nil];
+    [NotificationCenter addObserver:self selector:@selector(reloadTaskData) name:Notify_Task_Save object:nil];
+    
+    
     [self loadCustomView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self reloadTaskData];
+    
     [self refreshRedDot];
     [self checkUnread:self.tabBarController.tabBar index:1];
     
@@ -85,7 +106,106 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         }
     }
 }
+#pragma mark taskPlan任务计划
+- (void)toTask:(NSNotification*)notification {
+    NSDictionary *dict = notification.userInfo;
+    NSInteger type = [[dict objectForKey:@"type"] integerValue];
+    if (type != 1) {//非任务提醒
+        return;
+    }
+    Task *task = [[Task alloc] init];
+    task.account = [dict objectForKey:@"account"];
+    BmobUser *user = [BmobUser getCurrentUser];
+    if ((user && [task.account isEqualToString:user.objectId])
+        || (!user && [task.account isEqualToString:@""])) {
+        
+        task.taskId = [dict objectForKey:@"tag"];
+        task.content = [dict objectForKey:@"content"];
+        task.totalCount = [dict objectForKey:@"totalCount"];
+        task.completionDate = [dict objectForKey:@"completionDate"];
+        task.createTime = [dict objectForKey:@"createTime"];
+        task.updateTime = [dict objectForKey:@"updateTime"];
+        task.isNotify = [dict objectForKey:@"isNotify"];
+        task.notifyTime = [dict objectForKey:@"notifyTime"];
+        task.isTomato = [dict objectForKey:@"isTomato"];
+        task.tomatoMinute = [dict objectForKey:@"tomatoMinute"];
+        task.isRepeat = [dict objectForKey:@"isRepeat"];
+        task.repeatType = [dict objectForKey:@"repeatType"];
+        task.taskOrder = [dict objectForKey:@"taskOrder"];
+        task.isDeleted = @"0";
+        
+        TaskDetailViewController *controller = [[TaskDetailViewController alloc]init];
+        controller.task = task;
+        controller.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:controller animated:YES];
+    }
+}
 
+- (void)reloadTaskData {
+    if (isTableEditing) return;
+    
+    taskArray = [PlanCache getTask];
+    if (taskArray.count > 0) {
+        longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        longPress.minimumPressDuration = 1.0;
+        longPress.delegate = self;
+        [tableViewTask addGestureRecognizer:longPress];
+    }
+    [tableViewTask reloadData];
+}
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer {
+    if(gestureRecognizer.state == UIGestureRecognizerStateBegan
+       && !tableViewTask.editing) {
+        [self orderAction];
+    }
+}
+
+- (void)orderAction {
+    if (taskArray.count == 0) {
+        return;
+    }
+    //设置tableview编辑状态
+    BOOL flag = !tableViewTask.editing;
+    [tableViewTask setEditing:flag animated:YES];
+    if (!flag) {
+        isTableEditing = YES;
+        NSString *timenow = [CommonFunction getTimeNowString];
+        for (NSInteger i = 0; i < taskArray.count; i++) {
+            Task *task = taskArray[i];
+            task.taskOrder = [NSString stringWithFormat:@"%ld", (long)i];
+            task.updateTime = timenow;
+            [PlanCache storeTask:task];
+        }
+        taskArray = [PlanCache getTask];
+        isTableEditing = NO;
+    }
+    //更换按钮icon
+    if (flag) {
+        self.rightBarButtonItem = [self createBarButtonItemWithTitle:@"完成" titleColor:[UIColor whiteColor] font:font_Normal_16 selector:@selector(orderAction)];
+    } else {
+        self.rightBarButtonItem = [self createBarButtonItemWithNormalImageName:png_Btn_Add selectedImageName:png_Btn_Add selector:@selector(addAction:)];
+    }
+}
+
+#pragma mark 选择编辑模式，添加模式很少用,默认是删除
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleNone;
+}
+
+#pragma mark 排序 当移动了某一行时候会调用
+//编辑状态下，只要实现这个方法，就能实现拖动排序
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    //取出要拖动的模型数据
+    Task *task = taskArray[sourceIndexPath.row];
+    //删除之前行的数据
+    [taskArray removeObject:task];
+    // 插入数据到新的位置
+    [taskArray insertObject:task atIndex:destinationIndexPath.row];
+}
+
+
+#pragma mark====================
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     if (planType == EverydayPlan) {
@@ -109,9 +229,17 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
 - (void)getPlanData {
     if (planType == FuturePlan) {
         [self getFuturePlan];
-    } else {
+    } else if (planType == EverydayPlan){
         [self getDayPlan];
+    } else{
+        [self getTaskPlan];
     }
+}
+
+-(void)getTaskPlan{
+    taskArray=[NSMutableArray array];
+    [self reloadTaskData];
+    
 }
 
 - (void)getDayPlan {
@@ -230,6 +358,8 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         [tableViewDay reloadData];
     } else if (tableViewFuture && planType == FuturePlan) {
         [tableViewFuture reloadData];
+    } else if (tableViewTask && planType == TaskPlan){
+        [tableViewTask reloadData];
     }
 }
 
@@ -263,22 +393,39 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         
         weakSelf.planType = FuturePlan;
         
-    } rightButtonSelectBlock:nil];
+    } rightButtonSelectBlock:^{//新增
+        
+        weakSelf.planType = TaskPlan;
+        
+    }];
     
-    threeSubView.fixLeftWidth = CGRectGetWidth(self.view.bounds)/2;
-    threeSubView.fixCenterWidth = CGRectGetWidth(self.view.bounds)/2;
+    threeSubView.fixLeftWidth = CGRectGetWidth(self.view.bounds)/3;
+    threeSubView.fixCenterWidth = CGRectGetWidth(self.view.bounds)/3;
+    threeSubView.fixRightWidth = CGRectGetWidth(self.view.bounds)/3;//新增
+    
     [threeSubView.leftButton setAllTitleColor:[CommonFunction getGenderColor]];
     [threeSubView.centerButton setAllTitleColor:[CommonFunction getGenderColor]];
+    [threeSubView.rightButton setAllTitleColor:[CommonFunction getGenderColor]];
+    
     threeSubView.leftButton.titleLabel.font = font_Bold_18;
     threeSubView.centerButton.titleLabel.font = font_Bold_18;
+    threeSubView.rightButton.titleLabel.font = font_Bold_18;
+    
     [threeSubView.leftButton setAllTitle:str_FirstView_11];
     [threeSubView.centerButton setAllTitle:str_FirstView_12];
+    [threeSubView.rightButton setAllTitle:str_FirstView_13];
+    
+    
     [threeSubView autoLayout];
     [self.view addSubview:threeSubView];
     {
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.bounds)/2, 5, 1, kPlan_MenuHeight - 10)];
-        view.backgroundColor = color_GrayLight;
-        [threeSubView addSubview:view];
+        UIView *view1 = [[UIView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.bounds)/3, 5, 1, kPlan_MenuHeight - 10)];
+        view1.backgroundColor = color_GrayLight;
+        [threeSubView addSubview:view1];
+        
+        UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake((CGRectGetWidth(self.view.bounds)/3)*2, 5, 1, kPlan_MenuHeight - 10)];
+        view2.backgroundColor = color_GrayLight;
+        [threeSubView addSubview:view2];
     }
     {
         UIImage *image = [UIImage imageNamed:png_Bg_Cell_White];
@@ -318,9 +465,16 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         tableView.frame = frame;
         [self.view addSubview:tableView];
         tableViewFuture = tableView;
-    } else {
+    } else if (!tableViewTask && planType == TaskPlan) {
+        UITableView *tableView = [self createTableView];
+        tableView.frame = frame;
+        [self.view addSubview:tableView];
+        tableViewTask = tableView;
+
+    }else {
         [tableViewDay reloadData];
         [tableViewFuture reloadData];
+        [tableViewTask reloadData];
     }
 }
 
@@ -328,6 +482,7 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
     [self moveUnderLineViewToButton:threeSubView.leftButton];
     tableViewFuture.hidden = YES;
     tableViewDay.hidden = NO;
+    tableViewTask.hidden=YES;
 
     [self getPlanData];
     
@@ -336,14 +491,28 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
     }
 }
 
-- (void)moveUnderLineViewToRight {
+- (void)moveUnderLineViewToCenter {
     [self moveUnderLineViewToButton:threeSubView.centerButton];
     tableViewFuture.hidden = NO;
     tableViewDay.hidden = YES;
+    tableViewTask.hidden=YES;
     
     [self getPlanData];
     
     if (!tableViewFuture) {
+        [self showListView];
+    }
+}
+
+- (void)moveUnderLineViewToRight {
+    [self moveUnderLineViewToButton:threeSubView.rightButton];
+    tableViewFuture.hidden = YES;
+    tableViewDay.hidden = YES;
+    tableViewTask.hidden = NO;
+    
+    [self getPlanData];
+    
+    if (!tableViewTask) {
         [self showListView];
     }
 }
@@ -375,9 +544,15 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
             break;
         case FuturePlan:
         {
+            [self moveUnderLineViewToCenter];
+        }
+            break;
+        case TaskPlan:
+        {
             [self moveUnderLineViewToRight];
         }
             break;
+        
         default:
             break;
     }
@@ -426,7 +601,9 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         } else {
             return 1;
         }
-    } else {
+    }else if (planType == TaskPlan){
+        return 1;
+    }else {
         return 0;
     }
 }
@@ -456,7 +633,13 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         } else {
             return 3;
         }
-    } else {
+    } else if(planType == TaskPlan){
+        if (taskArray.count > 0) {
+            return taskArray.count;
+        } else {
+            return 5;
+        }
+    }else {
         return 0;
     }
 }
@@ -549,6 +732,34 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
             }
             return cell;
         }
+    }else if (planType ==TaskPlan){
+        if (indexPath.row < taskArray.count) {
+            tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+            Task *task = taskArray[indexPath.row];
+            TaskCell *cell = [TaskCell cellView:task];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            return cell;
+        } else {
+            tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+            static NSString *noTaskCellIdentifier = @"noTaskCellIdentifier";
+            
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:noTaskCellIdentifier];
+            if (!cell) {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:noTaskCellIdentifier];
+                cell.backgroundColor = [UIColor clearColor];
+                cell.contentView.backgroundColor = [UIColor clearColor];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.textLabel.text = @"";
+                cell.textLabel.frame = cell.contentView.bounds;
+                cell.textLabel.textAlignment = NSTextAlignmentCenter;
+                cell.textLabel.textColor = [UIColor lightGrayColor];
+                cell.textLabel.font = font_Bold_16;
+            }
+            if (indexPath.row == 4) {
+                cell.textLabel.text = str_Task_Tips1;
+            }
+            return cell;
+        }
     }
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     return cell;
@@ -559,7 +770,8 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
     if ((planType == EverydayPlan
          && dayDateKeyArray.count == 0)
         || (planType == FuturePlan
-         && futureDateKeyArray.count == 0)) {
+            && futureDateKeyArray.count == 0)|| (planType == TaskPlan
+                                                 && taskArray.count == 0)) {
         return 0.00001f;
     } else {
         return kPlanSectionViewHeight;
@@ -588,7 +800,20 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
             [view toggleArrow];
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sectionClickedAction:)]];
         return view;
-    } else {
+    }else if (planType == TaskPlan && taskArray.count > section) {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, WIDTH_FULL_SCREEN, 44.f)];
+        view.backgroundColor = [UIColor whiteColor];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kEdgeInset, 0, WIDTH_FULL_SCREEN - kEdgeInset * 2, 43.f)];
+        label.textAlignment = NSTextAlignmentRight;
+        label.text = @"长按任务可拖动排序";
+        label.textColor = color_8f8f8f;
+        [view addSubview:label];
+        
+        UILabel *labelLine = [[UILabel alloc] initWithFrame:CGRectMake(0, 43.f, WIDTH_FULL_SCREEN, 1)];
+        labelLine.backgroundColor = color_dedede;
+        [view addSubview:labelLine];
+        return view;
+    }else {
         return nil;
     }
 }
@@ -598,7 +823,7 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
     if ((planType == EverydayPlan
          && indexPath.section >= dayDateKeyArray.count)
         || (planType == FuturePlan
-            && indexPath.section >= futureDateKeyArray.count)) {
+            && indexPath.section >= futureDateKeyArray.count)||(planType == TaskPlan&& indexPath.row >= taskArray.count)) {
         return;
     }
     Plan *selectedPlan = nil;
@@ -610,10 +835,19 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
         NSString *dateKey = futureDateKeyArray[indexPath.section];
         NSArray *planArray = [futurePlanDict objectForKey:dateKey];
         selectedPlan = planArray[indexPath.row];
+    }else if (planType == TaskPlan){
+        
+        TaskDetailViewController *controller = [[TaskDetailViewController alloc]init];
+        controller.task = taskArray[indexPath.row];
+        controller.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:controller animated:YES];
+    
     }
     if (selectedPlan) {
         [self toPlanDetailWithPlan:selectedPlan];
     }
+    
+    
 }
 
 - (NSString *)getSectionTitle:(NSString *)date {
@@ -659,10 +893,17 @@ NSUInteger const kPlan_TodayCellHeaderViewHeight = 30;
 }
 
 - (void)addAction:(UIButton *)button {
-    AddPlanViewController *controller = [[AddPlanViewController alloc] init];
-    controller.operationType = Add;
-    controller.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:controller animated:YES];
+    if (planType == EverydayPlan || planType== FuturePlan) {
+        AddPlanViewController *controller = [[AddPlanViewController alloc] init];
+        controller.operationType = Add;
+        controller.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:controller animated:YES];
+    }else if(planType==TaskPlan){
+        AddTaskViewController *controller = [[AddTaskViewController alloc] init];
+        controller.operationType = Add;
+        controller.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:controller animated:YES];
+    }
 }
 
 - (void)sectionClickedAction:(UITapGestureRecognizer *)sender {

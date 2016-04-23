@@ -200,23 +200,23 @@
             //程序在后台或者已关闭
             [NotificationCenter postNotificationName:Notify_Push_LocalNotify object:nil userInfo:lastNotification.userInfo];
             
-            NSDictionary *dict = lastNotification.userInfo;
-            NSInteger type = [[dict objectForKey:@"type"] integerValue];
-            if (type == 0) {//计划提醒
-                Plan *plan = [[Plan alloc] init];
-                plan.account = [dict objectForKey:@"account"];
-                plan.planid = [dict objectForKey:@"tag"];
-                if ([plan.planid isEqualToString:Notify_FiveDay_Tag]) {
-                    //5天未新建计划提醒，不需要跳转到计划详情
-                    return;
-                }
-                //切换到计划栏
-                [self changeTabbarSelectedItem:1];
-                
-            } else if (type == 1) {//任务提醒
-                //切换到任务栏
-                [self changeTabbarSelectedItem:2];
+//            NSDictionary *dict = lastNotification.userInfo;
+//            NSInteger type = [[dict objectForKey:@"type"] integerValue];
+            //if (type == 0) {//计划提醒
+            Plan *plan = [[Plan alloc] init];
+            plan.account = [dict objectForKey:@"account"];
+            plan.planid = [dict objectForKey:@"tag"];
+            if ([plan.planid isEqualToString:Notify_FiveDay_Tag]) {
+                //5天未新建计划提醒，不需要跳转到计划详情
+                return;
             }
+            //切换到计划栏
+            [self changeTabbarSelectedItem:1];
+                
+//            } else if (type == 1) {//任务提醒
+//                //切换到任务栏
+//                [self changeTabbarSelectedItem:2];
+//            }
             
         } else {
             //程序正在运行

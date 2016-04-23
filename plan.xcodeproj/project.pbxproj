@@ -1115,12 +1115,12 @@
 		135B22111B92C070005CE84A /* UIViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				13AF64C21C269238008E8A9E /* Community */,
+				13AF64C21C269238008E8A9E /* Community(社区) */,
 				135B22121B92C0AC005CE84A /* FatherController */,
 				132263A31B9C805700D21637 /* MainView */,
 				137700D81B952DA1008C83FD /* More */,
 				131D6A661BFB5D9C009FDD72 /* PersonalCenter */,
-				13A6AC941BC3473E005A02F9 /* Photo */,
+				13A6AC941BC3473E005A02F9 /* Photo(岁月影响) */,
 				135B22231B92EC69005CE84A /* Plan */,
 				131D6A701BFB68A8009FDD72 /* Task */,
 			);
@@ -1447,7 +1447,7 @@
 			path = DataCenter;
 			sourceTree = "<group>";
 		};
-		13A6AC941BC3473E005A02F9 /* Photo */ = {
+		13A6AC941BC3473E005A02F9 /* Photo(岁月影响) */ = {
 			isa = PBXGroup;
 			children = (
 				13A6AC9E1BC3AAA3005A02F9 /* AddPhotoViewController.h */,
@@ -1460,6 +1460,7 @@
 				131D6A6D1BFB5DDE009FDD72 /* PhotoViewController.h */,
 				131D6A6E1BFB5DDE009FDD72 /* PhotoViewController.m */,
 			);
+			name = "Photo(岁月影响)";
 			path = Photo;
 			sourceTree = "<group>";
 		};
@@ -1476,7 +1477,7 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
-		13AF64C21C269238008E8A9E /* Community */ = {
+		13AF64C21C269238008E8A9E /* Community(社区) */ = {
 			isa = PBXGroup;
 			children = (
 				13D406141C2F9AD00089D702 /* AddPostsViewController.h */,
@@ -1495,6 +1496,7 @@
 				13AF64C41C269369008E8A9E /* PostsTwoImageCell.m */,
 				13AF64C51C269369008E8A9E /* PostsTwoImageCell.xib */,
 			);
+			name = "Community(社区)";
 			path = Community;
 			sourceTree = "<group>";
 		};
@@ -1638,6 +1640,7 @@
 				TargetAttributes = {
 					135B21821B900394005CE84A = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = 3GPWZQBBSF;
 					};
 					135B219E1B900394005CE84A = {
 						CreatedOnToolsVersion = 6.4;
@@ -2065,8 +2068,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2477,9 +2480,9 @@
 					"$(PROJECT_DIR)/plan/Libs/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/extends/SinaWeiboSDK",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.andwho.plan;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maomao.plan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7d1bf66a-a121-49a3-b19c-d1b7b1634516";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2490,8 +2493,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2902,9 +2905,9 @@
 					"$(PROJECT_DIR)/plan/Libs/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/ShareSDK/extends/SinaWeiboSDK",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.andwho.plan;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maomao.plan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7d1bf66a-a121-49a3-b19c-d1b7b1634516";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

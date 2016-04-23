@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="lSA-md-YaU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="lSA-md-YaU">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
         <!--我的-->
@@ -188,7 +188,7 @@
         <!--Root View Controller-->
         <scene sceneID="7aj-5Z-4pe">
             <objects>
-                <tableViewController modalTransitionStyle="partialCurl" id="XjJ-rs-CV1" customClass="FourViewController" sceneMemberID="viewController">
+                <tableViewController modalTransitionStyle="partialCurl" id="XjJ-rs-CV1" customClass="PhotoViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="JNE-15-OTI">
                         <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -224,7 +224,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="community" width="22" height="22"/>
+        <image name="community" width="28" height="28"/>
         <image name="plan" width="16" height="16"/>
         <image name="task" width="16" height="16"/>
         <image name="time" width="16" height="16"/>

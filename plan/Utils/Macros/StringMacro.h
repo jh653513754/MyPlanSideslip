@@ -61,6 +61,8 @@
 #define str_FirstView_10 @"类型"
 #define str_FirstView_11 @"今天计划"
 #define str_FirstView_12 @"未来计划"
+//新增
+#define str_FirstView_13 @"任务计划"
 
 #define str_Save_Success @"保存成功"
 #define str_Save_Fail @"保存失败"
@@ -281,7 +283,7 @@
 #define str_Task_Tips5 @"请输入番茄工作法时间"
 #define str_Task_Tips6 @"每次番茄工作法的时间必须大于0分钟"
 #define str_Task_Tips7 @"设置重复提醒"
-#define str_Task_Tips8 @"当前番茄时间为0"
+#define str_Task_Tips8 @"完成一次"
 #define str_Task_Tips9 @"开始番茄"
 #define str_Task_Tips10 @"番茄时间"
 #define str_Task_Tips11 @"任务提醒时间:"
